@@ -19,9 +19,9 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
-
+    
     use RegistersUsers;
-
+    //ここ(RegistersUsersトレイト)にshowRegistrationForm アクションと register アクションが含まれている
     /**
      * Where to redirect users after registration.
      *
