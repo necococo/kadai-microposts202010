@@ -34,6 +34,7 @@ class User extends Authenticatable
     }
     
     
+    //follow unfollow関係
     //フォローしているユーザー一覧取得
     public function followings()
     {
@@ -47,10 +48,11 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'user_follow', 'follow_id', 'user_id')->withTimestamps();
     }
     
+    
     //引数のユーザーをすでにフォローしているかどうか判定
-    public function is_followings($userId)
+    public function is_following($userId)
     {
-        return $this->followings()->wherre('follow_id', 'userId')->exists();
+        return $this->followings()->where('follow_id', $userId)->exists();
     }
     
     
@@ -62,7 +64,7 @@ class User extends Authenticatable
         $its_me = $this->id == $userId;
 
         if ($exist || $its_me) {
-            // 自分自身、または既にフォローしていれば何もしない
+            // 既にフォローしていれば何もしない
             return false;
         } else {
             // 未フォローであればフォローする
@@ -93,5 +95,55 @@ class User extends Authenticatable
         $follow_user_ids = $this->followings()->pluck('users.id')->toArray();
         $follow_user_ids[] = $this->id;
         return Micropost::whereIn('user_id', $follow_user_ids);
+    }
+    
+    
+    
+    //post_favo table関係
+    //public 宣言されたものはどこからでもアクセス可能。
+    public function favorite_posts()
+    {
+        return $this->belongsToMany(Micropost::class, 'post_favo', 'user_id', 'post_id')->withTimestamps();
+    }
+    
+    
+    //すでにfavoしているかどうかの判定
+    public function is_favoriting($postId) 
+    {
+        
+        //public 宣言されたクラスのメンバーには、どこからでもアクセス可能です。
+        return $this->favorite_posts()->where('post_id', $postId)->exists();
+    }
+    
+    
+    public function favorite($postId)
+    {
+        
+        $exist = $this->is_favoriting($postId);
+        // $its_mine = $this->microposts()->where('id', $postId)->exists();
+       
+        if($exist) {
+            return false;
+        }else {
+            $this->favorite_posts()->attach($postId);
+            return true;
+        }
+    }
+    
+    
+
+    public function unfavorite($postId)
+    {
+        
+        $exist = $this->is_favoriting($postId);
+        // $its_mine = $this->microposts()->where('id', $postId)->exists();
+       
+        if($exist) {
+            $this->favorite_posts()->detach($postId);
+            return true;
+            
+        }else {
+            return false;
+        }
     }
 }

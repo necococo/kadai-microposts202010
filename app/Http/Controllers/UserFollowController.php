@@ -20,34 +20,4 @@ class UserFollowController extends Controller
         \Auth::user()->unfollow($id);
         return redirect()->back();
     }
-    
-    
-    public function followings($id)
-    {
-        $user = User::find($id);
-        $followings = $user->followings()->paginate(10);
-        //usersでviewに渡すとこに注意
-        $data = [
-            'user'=>$user,
-            'users'=>$followings
-        ];
-        $data += $this->conts($user);
-        
-        return View('users.followings', $data);
-    }
-    
-    
-    public function followers($id)
-    {
-        $user = User::find($id);
-        $followers = $user->followers()->paginate(10);
-        //usersでviewに渡すとこに注意
-        $data = [
-            'user'=>$user,
-            'users'=>$followers
-        ];
-        $data += $this->conts($user);
-        
-        return View('users.followers', $data);
-    }
 }
