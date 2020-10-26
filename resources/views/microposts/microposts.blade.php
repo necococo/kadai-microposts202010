@@ -12,15 +12,26 @@
                 <div>
                     <p>{!! nl2br(e($micropost->content)) !!}</p>
                 </div>
-                @include('post_favo.favo_button', ['micropost'=>$micropost])
-                <div>
-                    @if (Auth::id() == $micropost->user_id)
-                        {!! Form::open(['route'=>['microposts.destroy', $micropost->id], 'method'=>'delete']) !!}
-                            {!! Form::submit('Delete', ['class'=>'btn btn-danger btn-xs']) !!}
-                        {!! Form::close() !!}
-                    @endif
-                </div>
             </div>
+            
+                @if (Auth::user()->is_favoriting($micropost->id) )
+                    {!! Form::open( ['route'=>['postfavo.unfavorite', $micropost->id], 'method'=>'delete', 'class'=>'form-row'] ) !!}
+                        {!! Form::submit( 'unfavorite', ['class'=>'btn btn-danger btn-xs col-xs-2'] ) !!}
+                    {!! Form::close() !!}
+                @else
+                    {!! Form::open( ['route'=>['postfavo.favorite', $micropost->id], 'method'=>'post', 'class'=>'form-row'] ) !!}
+                        {!! Form::submit( 'favorite', ['class'=>'btn btn-success btn-xs col-xs-2'] ) !!}
+                    {!! Form::close() !!}
+                @endif
+            
+                @if (Auth::id() == $micropost->user_id)
+                    {!! Form::open(['route'=>['microposts.destroy', $micropost->id], 'method'=>'delete', 'class'=>'form-row'] ) !!}
+                        {!! Form::submit('Delete', ['class'=>'btn btn-danger btn-xs col-xs-1']) !!}
+                    {!! Form::close() !!}
+                @endif
+           
+                
+            
         </li>
     @endforeach
 </ul>
