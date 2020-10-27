@@ -13,7 +13,19 @@
                     </div>
                 </div>
             </aside>
+            <div>
+            @if (Auth::id() == $user->id)
+                  {!! Form::open(['route' => 'microposts.store']) !!}
+                      <div class="form-group col-xs-8">
+                          {!! Form::textarea('content', old('content'), ['class' => 'form-control', 'rows' => '2']) !!}
+                          {!! Form::submit('Post', ['class' => 'btn btn-primary btn-block']) !!}
+                      </div>
+                  {!! Form::close() !!}
+            @endif
+            </div>
+            
             <div class="col-xs-8">
+                <h5 class="card-title">Timeline</h5>
                 @if (count($microposts) > 0)
                     @include('microposts.microposts', ['microposts' => $microposts])
                 @endif
